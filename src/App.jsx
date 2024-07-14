@@ -48,15 +48,14 @@ function App() {
   const handleFanncukReduxClick = useCallback(() => {
     let start, end;
     timer(0).pipe(
-      switchMap(() => {
-        console.log("FanncukRedux Rust");
-        return from(fanncukReduxGames.rust());
-      }),
-      tap((wasm) => {
+      tap(() => {
+        console.log("FanncukRedux JS");
         start = performance.now();
-        wasm.main(depth);
+      }),
+      switchMap(() => from(fanncukReduxGames.js(depth))),
+      tap(() => {
         end = performance.now();
-        console.log(`FanncukRedux Rust: ${end - start}ms`);
+        console.log(`FanncukRedux JS: ${end - start}ms`);
       }),
       switchMap(() => {
         console.log("FanncukRedux Cpp");
@@ -68,6 +67,16 @@ function App() {
         run(depth);
         end = performance.now();
         console.log(`FanncukRedux Cpp: ${end - start}ms`);
+      }),
+      switchMap(() => {
+        console.log("FanncukRedux Rust");
+        return from(fanncukReduxGames.rust());
+      }),
+      tap((wasm) => {
+        start = performance.now();
+        wasm.main(depth);
+        end = performance.now();
+        console.log(`FanncukRedux Rust: ${end - start}ms`);
       }),
     ).subscribe();
   }, [depth]);
