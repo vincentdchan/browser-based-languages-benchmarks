@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import { binaryTreesGames } from "../games/binary-trees";
+import { fanncukReduxGames } from "../games/fannkuch-redux";
 import { from, timer, tap, switchMap } from "rxjs";
 import './App.css'
 
@@ -40,7 +41,34 @@ function App() {
         run(depth);
         end = performance.now();
         console.log(`cpp: ${end - start}ms`);
-      })
+      }),
+    ).subscribe();
+  }, [depth]);
+
+  const handleFanncukReduxClick = useCallback(() => {
+    let start, end;
+    timer(0).pipe(
+      switchMap(() => {
+        console.log("FanncukRedux Rust");
+        return from(fanncukReduxGames.rust());
+      }),
+      tap((wasm) => {
+        start = performance.now();
+        wasm.main(depth);
+        end = performance.now();
+        console.log(`FanncukRedux Rust: ${end - start}ms`);
+      }),
+      switchMap(() => {
+        console.log("FanncukRedux Cpp");
+        return from(fanncukReduxGames.cpp());
+      }),
+      tap(Module => {
+        start = performance.now();
+        const run = Module.cwrap('run', 'number', ['number'])
+        run(depth);
+        end = performance.now();
+        console.log(`FanncukRedux Cpp: ${end - start}ms`);
+      }),
     ).subscribe();
   }, [depth]);
 
@@ -58,7 +86,10 @@ function App() {
       <div className="card">
         <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
         <button onClick={handleButtonClick}>
-          Depth is {depth}
+          BinaryTrees: {depth}
+        </button>
+        <button onClick={handleFanncukReduxClick}>
+          FanncukRedux: {depth}
         </button>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
