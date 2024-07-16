@@ -1,112 +1,75 @@
 import { useState, useCallback } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { binaryTreesGames } from "../games/binary-trees";
-import { fanncukReduxGames } from "../games/fannkuch-redux";
-import { from, timer, tap, switchMap } from "rxjs";
+import { Observable, forkJoin, Subject, takeUntil } from "rxjs";
+import GameRunner from './GameRunner';
+import GameWorker from "./gameWorker?worker";
 import './App.css'
 
-function App() {
-  const [depth, setDepth] = useState(20)
+function runGame(game, lang, depth) {
+  return new Observable((subscriber) => {
+    const worker = new GameWorker();
+    worker.postMessage({
+      game,
+      lang,
+      depth,
+    });
+    worker.addEventListener('message', (e) => {
+      subscriber.next(e.data);
+      subscriber.complete();
+    });
+    return () => {
+      worker.terminate();
+    };
+  });
+}
+
+function GameFragment(props) {
+  const { game } = props;
+  const [depth, setDepth] = useState(10);
+  const [gameData, setGameData] = useState(null);
+
   const handleButtonClick = useCallback(() => {
-    let start, end;
-
-    timer(0).pipe(
-      tap(() => {
-        console.log("JS");
-        start = performance.now();
-      }),
-      switchMap(() => from(binaryTreesGames.js(depth))),
-      tap(() => {
-        end = performance.now();
-        console.log(`JS: ${end - start}ms`);
-      }),
-      switchMap(() => {
-        console.log("Rust");
-        return from(binaryTreesGames.rust());
-      }),
-      tap((wasm) => {
-        start = performance.now();
-        wasm.main(depth);
-        end = performance.now();
-        console.log(`Rust: ${end - start}ms`);
-      }),
-      switchMap(() => {
-        console.log("cpp");
-        return from(binaryTreesGames.cpp());
-      }),
-      tap(Module => {
-        start = performance.now();
-        const run = Module.cwrap('run', 'number', ['number'])
-        run(depth);
-        end = performance.now();
-        console.log(`cpp: ${end - start}ms`);
-      }),
-    ).subscribe();
-  }, [depth]);
-
-  const handleFanncukReduxClick = useCallback(() => {
-    let start, end;
-    timer(0).pipe(
-      tap(() => {
-        console.log("FanncukRedux JS");
-        start = performance.now();
-      }),
-      switchMap(() => from(fanncukReduxGames.js(depth))),
-      tap(() => {
-        end = performance.now();
-        console.log(`FanncukRedux JS: ${end - start}ms`);
-      }),
-      switchMap(() => {
-        console.log("FanncukRedux Cpp");
-        return from(fanncukReduxGames.cpp());
-      }),
-      tap(Module => {
-        start = performance.now();
-        const run = Module.cwrap('run', 'number', ['number'])
-        run(depth);
-        end = performance.now();
-        console.log(`FanncukRedux Cpp: ${end - start}ms`);
-      }),
-      switchMap(() => {
-        console.log("FanncukRedux Rust");
-        return from(fanncukReduxGames.rust());
-      }),
-      tap((wasm) => {
-        start = performance.now();
-        wasm.main(depth);
-        end = performance.now();
-        console.log(`FanncukRedux Rust: ${end - start}ms`);
-      }),
-    ).subscribe();
-  }, [depth]);
+    const dispose$ = new Subject();
+    const observables = ['js', 'rust', 'cpp'].map(lang => runGame(game, lang, depth));
+    forkJoin(observables)
+      .pipe(takeUntil(dispose$))
+      .subscribe(result => {
+        setGameData(result.map(item => item.time));
+      })
+    return () => {
+      dispose$.next();
+      dispose$.complete();
+    }
+  }, [game, depth]);
 
   return (
+    <div className="game-fragment">
+      <h1>{game}</h1>
+      <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
+      <button onClick={handleButtonClick}>
+        Run: {depth}
+      </button>
+      {gameData && (
+        <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
+      )}
+    </div>
+  )
+}
+
+function App() {
+  return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>Benchmarking Browser-Based Languages: A Comprehensive Performance Comparison</h1>
       <div className="card">
-        <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
-        <button onClick={handleButtonClick}>
-          BinaryTrees: {depth}
-        </button>
-        <button onClick={handleFanncukReduxClick}>
-          FanncukRedux: {depth}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <GameFragment game="binaryTrees" />
+        <GameFragment game="fanncukRedux" />
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <div className="footer">
+          © {new Date().getFullYear()}, Built by{" "}
+          <a href="https://www.diverse.space/">Vincent Chan</a>
+      </div>
     </>
   )
 }
