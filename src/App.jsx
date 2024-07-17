@@ -43,14 +43,12 @@ function GameFragment(props) {
 
   return (
     <div className="game-fragment">
-      <h1>{game}</h1>
+      <h3>{game}</h3>
       <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
       <button onClick={handleButtonClick}>
         Run: {depth}
       </button>
-      {gameData && (
-        <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
-      )}
+      <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
     </div>
   )
 }
@@ -58,7 +56,8 @@ function GameFragment(props) {
 function App() {
   return (
     <>
-      <h1>Benchmarking Browser-Based Languages: A Comprehensive Performance Comparison</h1>
+      <h1>Benchmarking Browser-Based Languages</h1>
+      <h2 className="subtitle">A Comprehensive Performance Comparison</h2>
       <div className="card">
         <GameFragment game="binaryTrees" />
         <GameFragment game="fanncukRedux" />

@@ -11,6 +11,9 @@ function GameRunner(props) {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (!data) {
+      return;
+    }
     const myChart = echarts.init(containerRef.current);
 
     const options = {
@@ -51,7 +54,16 @@ function GameRunner(props) {
   }, [containerRef, data, rows]);
 
   return (
-    <div className="game-runner" style={{ width: 960, height: 480 }} ref={containerRef}></div>
+    <div className="game-runner" style={{ width: 960, height: 480 }}>
+      {!data && (
+        <div className="placeholder">
+          Click "Run" button to start the benchmark
+        </div>
+      )}
+      <div ref={containerRef}>
+
+      </div>
+    </div>
   )
 }
 
