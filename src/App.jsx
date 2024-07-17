@@ -62,9 +62,6 @@ function App() {
         <GameFragment game="binaryTrees" />
         <GameFragment game="fanncukRedux" />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
       <div className="footer">
           © {new Date().getFullYear()}, Built by{" "}
           <a href="https://www.diverse.space/">Vincent Chan</a>
