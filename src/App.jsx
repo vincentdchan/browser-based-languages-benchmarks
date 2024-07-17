@@ -23,7 +23,7 @@ function runGame(game, lang, depth) {
 }
 
 function GameFragment(props) {
-  const { game } = props;
+  const { game, hasDepth = true } = props;
   const [depth, setDepth] = useState(10);
   const [gameData, setGameData] = useState(null);
 
@@ -44,10 +44,18 @@ function GameFragment(props) {
   return (
     <div className="game-fragment">
       <h3>{game}</h3>
-      <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
-      <button onClick={handleButtonClick}>
-        Run: {depth}
-      </button>
+      {hasDepth ? (
+        <>
+          <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
+          <button onClick={handleButtonClick}>
+            Run: {depth}
+          </button>
+        </>
+      ) : (
+        <button onClick={handleButtonClick}>
+          Run
+        </button>
+      )}
       <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
     </div>
   )
@@ -61,6 +69,7 @@ function App() {
       <div className="card">
         <GameFragment game="binaryTrees" />
         <GameFragment game="fanncukRedux" />
+        <GameFragment game="zip" hasDepth={false} />
       </div>
       <div className="footer">
           © {new Date().getFullYear()}, Built by{" "}

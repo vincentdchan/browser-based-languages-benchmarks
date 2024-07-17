@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  zlibjs@0.3.1:
+    hash: vqxap3sel33yzyhyslha6jtlky
+    path: patches/zlibjs@0.3.1.patch
+
 importers:
 
   .:
@@ -17,6 +22,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      zlibjs:
+        specifier: ^0.3.1
+        version: 0.3.1(patch_hash=vqxap3sel33yzyhyslha6jtlky)
     devDependencies:
       '@types/react':
         specifier: ^18.3.3
@@ -1370,6 +1378,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zlibjs@0.3.1:
+    resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
 
   zrender@5.6.0:
     resolution: {integrity: sha512-uzgraf4njmmHAbEUxMJ8Oxg+P3fT04O+9p7gY+wJRVxo8Ge+KmYv0WJev945EH4wFuc4OY2NLXz46FZrWS9xJg==}
@@ -2865,6 +2876,8 @@ snapshots:
   yallist@3.1.1: {}
 
   yocto-queue@0.1.0: {}
+
+  zlibjs@0.3.1(patch_hash=vqxap3sel33yzyhyslha6jtlky): {}
 
   zrender@5.6.0:
     dependencies:

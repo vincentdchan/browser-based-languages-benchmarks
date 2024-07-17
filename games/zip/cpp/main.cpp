@@ -1,24 +1,17 @@
 #include "zip.h"
+#include "miniz.h"
 #include <cstdlib>
 
 extern "C" {
 
-char * compress(const char *inbuf) {
-  char *outbuf = NULL;
-  size_t outbufsize = 0;
+char * run(int level, const char *inbuf, size_t* out_size_ref) {
+  size_t input_len = strlen(inbuf);
+  char* outbuf;
+  size_t buf_len = mz_compressBound(input_len);
+  outbuf = (char*)malloc(buf_len);
 
-  struct zip_t *zip = zip_stream_open(NULL, 0, ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
-  {
-      zip_entry_open(zip, "foo-1.txt");
-      {
-          zip_entry_write(zip, inbuf, strlen(inbuf));
-      }
-      zip_entry_close(zip);
-
-      /* copy compressed stream into outbuf */
-      zip_stream_copy(zip, (void **)&outbuf, &outbufsize);
-  }
-  zip_stream_close(zip);
+  mz_compress2((unsigned char*)outbuf, &buf_len, (const unsigned char*)inbuf, input_len, level);
+  *out_size_ref = buf_len;
 
   return outbuf;
 }

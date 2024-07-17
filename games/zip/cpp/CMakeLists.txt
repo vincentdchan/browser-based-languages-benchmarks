@@ -16,7 +16,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
             "-s ALLOW_MEMORY_GROWTH=1 \
             -s INITIAL_MEMORY=67108864 \
             -s DISABLE_EXCEPTION_CATCHING=1 \
-            -s EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\", \"allocateUTF8\", \"UTF8ToString\"]' \
+            -s EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\", \"getValue\", \"allocateUTF8\", \"UTF8ToString\"]' \
+            -s EXPORTED_FUNCTIONS='[\"_run\", \"_malloc\", \"_free\"]' \
+            -s EXPORT_ES6=1 -sMODULARIZE \
              -s ENVIRONMENT='web,worker' \
             ")
 endif()
