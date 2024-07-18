@@ -95,8 +95,9 @@ globalThis.addEventListener('message', (e) => {
     }
 
   } else if (game === 'zip') {
-    import("./assets/hamlet.txt?raw")
-      .then(({ default: zipContent }) => {
+    fetch("./hamlet.txt")
+      .then(resp => resp.text())
+      .then((zipContent) => {
         switch (lang) {
           case 'js':
               // const deflate = new Zlib.RawDeflate(zipContent);
