@@ -1,2 +1,4 @@
 
-/build
+/build/*
+!/build/run.js
+!/build/run.wasm

@@ -23,7 +23,7 @@ function runGame(game, lang, depth) {
 }
 
 function GameFragment(props) {
-  const { game, hasDepth = true } = props;
+  const { game, hasDepth = true, source } = props;
   const [depth, setDepth] = useState(10);
   const [gameData, setGameData] = useState(null);
 
@@ -44,18 +44,21 @@ function GameFragment(props) {
   return (
     <div className="game-fragment">
       <h3>{game}</h3>
-      {hasDepth ? (
-        <>
-          <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
+      <div>
+        {hasDepth ? (
+          <>
+            <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} />
+            <button onClick={handleButtonClick}>
+              Run: {depth}
+            </button>
+          </>
+        ) : (
           <button onClick={handleButtonClick}>
-            Run: {depth}
+            Run
           </button>
-        </>
-      ) : (
-        <button onClick={handleButtonClick}>
-          Run
-        </button>
-      )}
+        )}
+        {source && (<a className="source" href={source}>Source</a>)}
+      </div>
       <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
     </div>
   )
@@ -67,8 +70,8 @@ function App() {
       <h1>Benchmarking Browser-Based Languages</h1>
       <h2 className="subtitle">A Comprehensive Performance Comparison</h2>
       <div className="card">
-        <GameFragment game="binaryTrees" />
-        <GameFragment game="fanncukRedux" />
+        <GameFragment game="binaryTrees" source="https://github.com/vincentdchan/browser-based-languages-benchmarks/tree/master/games/binary-trees" />
+        <GameFragment game="fanncukRedux" source="https://github.com/vincentdchan/browser-based-languages-benchmarks/tree/master/games/fannkuch-redux" />
         <GameFragment game="zip" hasDepth={false} />
       </div>
       <div className="footer">
