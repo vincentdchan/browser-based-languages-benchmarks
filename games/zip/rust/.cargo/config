@@ -1,0 +1,7 @@
+
+[target.wasm32-unknown-unknown]
+# Increase the stack size to 4MB, the default is 1MB
+# This is to prevent index out of bounds panics in the wasm code while running.
+rustflags = [
+    "-C", "link-args=-z stack-size=4000000",
+]

@@ -1,0 +1,32 @@
+diff --git a/bin/zlib.pretty.js b/bin/zlib.pretty.js
+index 5316c6e8cd511ff3cb484963c9bc0e9e0e59c303..260e53fd1480444390b41101871d4b2afbf159d2 100644
+--- a/bin/zlib.pretty.js
++++ b/bin/zlib.pretty.js
+@@ -1,6 +1,6 @@
+-/** @license zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License */(function() {'use strict';var COMPILED = false;
++/** @license zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License */export default (function() {'use strict';var COMPILED = false;
+ var goog = goog || {};
+-goog.global = this;
++goog.global = globalThis || {};
+ goog.DEBUG = true;
+ goog.LOCALE = "en";
+ goog.provide = function(name) {
+@@ -3749,4 +3749,5 @@ goog.exportSymbol("Zlib.Zip.prototype.compress", Zlib.Zip.prototype.compress);
+ goog.exportSymbol("Zlib.Zip.prototype.setPassword", Zlib.Zip.prototype.setPassword);
+ Zlib.exportObject("Zlib.Zip.CompressionMethod", {"STORE":Zlib.Zip.CompressionMethod.STORE, "DEFLATE":Zlib.Zip.CompressionMethod.DEFLATE});
+ Zlib.exportObject("Zlib.Zip.OperatingSystem", {"MSDOS":Zlib.Zip.OperatingSystem.MSDOS, "UNIX":Zlib.Zip.OperatingSystem.UNIX, "MACINTOSH":Zlib.Zip.OperatingSystem.MACINTOSH});
++return Zlib;
+ }).call(this);
+diff --git a/package.json b/package.json
+index 75db47af0ac09d80492e2eea737e31258a4ca5c6..7bc9d3a6d2c7c4de30798eed24a8d231e95ea0a9 100644
+--- a/package.json
++++ b/package.json
+@@ -7,7 +7,7 @@
+   "description": "zlib, gzip and zip implementation in JavaScript",
+   "version": "0.3.1",
+   "license": "MIT",
+-  "main": "./bin/node-zlib.js",
++  "main": "./bin/zlib.pretty.js",
+   "homepage": "https://github.com/imaya/zlib.js",
+   "repository": {
+     "type": "git",
