@@ -2,6 +2,29 @@ import { binaryTreesGames } from "../games/binary-trees";
 import { fanncukReduxGames } from "../games/fannkuch-redux";
 import { zipGames } from "../games/zip";
 
+async function compress(str) {
+  // Convert the string to a byte stream.
+  const stream = new Blob([str]).stream();
+
+  // Create a compressed stream.
+  const compressedStream = stream.pipeThrough(
+    new CompressionStream("deflate")
+  );
+
+  // Read all the bytes from this stream.
+  const chunks = [];
+  for await (const chunk of compressedStream) {
+    chunks.push(chunk);
+  }
+  return await concatUint8Arrays(chunks);
+}
+
+async function concatUint8Arrays(uint8arrays) {
+  const blob = new Blob(uint8arrays);
+  const buffer = await blob.arrayBuffer();
+  return new Uint8Array(buffer);
+}
+
 globalThis.addEventListener('message', (e) => {
   const { game, lang, depth } = e.data;
   let start, end, time;
@@ -99,19 +122,21 @@ globalThis.addEventListener('message', (e) => {
       .then(resp => resp.text())
       .then((zipContent) => {
         switch (lang) {
-          case 'js':
-              // const deflate = new Zlib.RawDeflate(zipContent);
-              // start = performance.now();
-              // const compressed = deflate.compress();
-              // end = performance.now();
-              // time = end - start;
-              // console.log("zlibjs", compressed);
+          case 'js': {
+            start = performance.now();
+            compress(zipContent).then(bytes => {
+              end = performance.now();
+              time = end - start;
+
+              console.log("js zip result", bytes);
               postMessage({
                 lang,
                 game,
-                time: 0,
+                time,
               });
+            });
             break;
+          }
           case 'rust':
             zipGames.rust()
               .then(() => {
