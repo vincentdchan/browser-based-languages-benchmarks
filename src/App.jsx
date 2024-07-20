@@ -43,7 +43,7 @@ function GameFragment(props) {
 
   return (
     <div className="game-fragment">
-      <h3>{game}</h3>
+      <h3>{beatifyName(game)}</h3>
       <div>
         {hasDepth ? (
           <>
@@ -62,6 +62,13 @@ function GameFragment(props) {
       <GameRunner data={gameData} rows={['js', 'rust', 'cpp']} />
     </div>
   )
+}
+
+function beatifyName(name) {
+  return name
+    .split(/(?=[A-Z])/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
 
 function App() {
