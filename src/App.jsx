@@ -73,6 +73,7 @@ function App() {
         <GameFragment game="binaryTrees" source="https://github.com/vincentdchan/browser-based-languages-benchmarks/tree/master/games/binary-trees" />
         <GameFragment game="fanncukRedux" source="https://github.com/vincentdchan/browser-based-languages-benchmarks/tree/master/games/fannkuch-redux" />
         <GameFragment game="zip" hasDepth={false} />
+        <GameFragment game="fontParser" hasDepth={false} />
       </div>
       <div className="footer">
           © {new Date().getFullYear()}, Built by{" "}

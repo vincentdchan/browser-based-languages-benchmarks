@@ -17,6 +17,11 @@ target_compile_definitions(run PUBLIC
         -DHAVE_UNISTD_H
         )
 
+# include free type in build dir
+target_include_directories(run PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/freetype/include
+        )
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     set_target_properties(run PROPERTIES LINK_FLAGS
             "-s ALLOW_MEMORY_GROWTH=1 \
